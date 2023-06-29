@@ -6,7 +6,7 @@ const app: Express = express();
 
 //HTTP Server
 app.get('/', (req: Request, res: Response) => res.sendFile(
-    path.join(__dirname, '..', '..', 'SimpleWebSocket', 'dist', 'simple-websocket-client.html')
+    path.join(__dirname, 'public', 'simple-websocket-client.html')
 ))
 
 const httpServer = app.listen(8000, 'localhost',
@@ -17,7 +17,7 @@ const wsServer = new Server({port: 8085});
 
 wsServer.on('connection',
     wsClient => {
-    wsClient.send('This message was pushed by the WebSocket sever');
+    wsClient.send('Это сообщение что отправил WebSocket sever');
 
     wsClient.onerror = (error) => console.log(`The server received: ${error}`)
 
