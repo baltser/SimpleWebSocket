@@ -5,17 +5,43 @@
     <title>Title</title>
 </head>
 <body>
-<span id="messageGoesHere"></span>
+<h1>Caht</h1>
+<div id="chat"></div>
+<label for="msg">Введите текс</label><input id="msg" type="text">
+<style>
+    input { border: 1px solid green }
+</style>
 <script type="text/javascript">
-    const ws = new WebSocket("ws://localhost:8085");
+    const CHAR_RETURN = 13;
 
-    const mySpan = document.getElementById('messageGoesHere');
-    ws.onmessage = function (event) {
-        mySpan.textContent = event.data;
+    const ws = new WebSocket("ws://localhost:8000/chat");
+    const chat = document.getElementById('chat');
+    const msg = document.getElementById('msg');
+    msg.focus();
+
+    const writeLine = text => {
+        const line = document.createElement('div');
+        line.innerHTML = `<p>${text}</p>`;
+        chat.appendChild(line);
     }
-    ws.onerror = function (event) {
-        console.log(`Error ${event}`)
-    }
+    ws.onopen = () => {
+        writeLine('connected');
+    };
+    ws.onclose = () => {
+        writeLine('closed');
+    };
+    ws.onmessage = event => {
+        writeLine(event.data);
+    };
+    msg.addEventListener('keydown', event => {
+        if(event.keyCode === CHAR_RETURN) {
+            const s = msg.value;
+            msg.value = '';
+            writeLine(s);
+            ws.send(s);
+        }
+    })
+
 </script>
 </body>
 </html>
